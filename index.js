@@ -1,26 +1,11 @@
-const fetchEmployees = require("./employees");
-const fetchFeedbacks = require("./feedbacks");
-
-const employeesCB = (data, store) => (store.employees = data);
-const feedbacksCB = (data, store) => (store.feedbacks = data);
-
-
-
-const loadData = (store) => {
-  fetchEmployees(employeesCB, store);
-  fetchFeedbacks(feedbacksCB, store);
-  return new Promise((resolve, reject) => {
-    const ensureData = setInterval(() => {
-      if (store.employees && store.feedbacks) {
-        resolve(store);
-        clearInterval(ensureData);
-      }
-    }, 100);
-  });
-};
+const loadData = require("./fetch_and_load_data/load_data");
+const generateScores = require("./generate_scores/generate_scores");
 
 const store = {};
-loadData(store).then(updatedStore => {
-  console.log(updatedStore.employees[0]);
-  console.log(updatedStore.feedbacks[0]);
-});
+const managerIds = [
+  "ab487f8c-8ebc-4bf6-b8fa-8dc85f880716",
+  "f4cb98dc-e6a0-488e-93a2-e9241c5b70f6"
+];
+
+loadData(store)
+.then(updatedStore => generateScores(updatedStore, managerIds));
